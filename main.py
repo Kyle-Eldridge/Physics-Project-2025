@@ -3,6 +3,8 @@ import numpy as np
 import time
 from Object import Object
 
+dt = 0.02
+
 fig, ax = plt.subplots()
 ax.set_aspect('equal')
 ax.set_xlim(-10, 10)
