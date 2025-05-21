@@ -24,3 +24,22 @@ def clamp(value, min_value, max_value):
     return max(min(value, max_value), min_value)
 def dist(point1, point2):
     return math.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
+def magnitude(vector):
+    return math.sqrt(vector[0] ** 2 + vector[1] ** 2)
+def angle(vector):
+    return math.atan2(vector[1], vector[0])
+def mult(vector, scalar):
+    return (vector[0] * scalar, vector[1] * scalar)
+def div(vector, scalar):
+    return (vector[0] / scalar, vector[1] / scalar)
+def normalize(vector):
+    mag = magnitude(vector)
+    if mag == 0:
+        return (0, 0)
+    return (vector[0] / mag, vector[1] / mag)
+def dot(vector1, vector2):
+    return vector1[0] * vector2[0] + vector1[1] * vector2[1]
+def cross(vector1, vector2):
+    return vector1[0] * vector2[1] - vector1[1] * vector2[0]
+def sign(x):
+    return (x > 0) - (x < 0)
