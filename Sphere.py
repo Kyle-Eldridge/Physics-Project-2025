@@ -3,7 +3,6 @@ import random
 
 from matplotlib.patches import Circle
 from Object import Object
-from StationaryPoint import StationaryPoint
 from Surface import Surface
 from constants import dt
 import utils
@@ -39,12 +38,12 @@ class Sphere(Object):
             if obj is self:
                 continue
             if isinstance(obj, Sphere):
+                if utils.sphereSphereCollide(self, obj):
+                    self.handleSphereCollision(obj)
                 r = utils.subPoints(self.position, obj.position)
                 # This uses r^3 because I multiply by the position difference r to get the vector
                 a = 8.98755e9*self.charge*obj.charge/(utils.magnitude(r)**3)/self.mass
                 self.acceleration = utils.addPoints(self.acceleration, utils.mult(r, a))
-                if utils.sphereSphereCollide(self, obj):
-                    self.handleSphereCollision(obj)
             elif isinstance(obj, Surface):
                 if utils.sphereSurfaceCollide(self, obj):
                     self.handleSurfaceCollision(obj)
@@ -120,6 +119,7 @@ class Sphere(Object):
         p = utils.rotatePoint(utils.subPoints(self.position, surface.position), -surface.angle)
         nearest = (utils.clamp(p[0], -surface.size/2, surface.size/2), utils.clamp(p[1], -surface.thickness/2, surface.thickness/2))
         nearest = utils.addPoints(surface.position, utils.rotatePoint(nearest, surface.angle))
+        from StationaryPoint import StationaryPoint
         tempPoint = StationaryPoint(nearest, 0, bounce = surface.bounce, friction = surface.friction)
         self.handleSphereCollision(tempPoint)
         
