@@ -1,6 +1,5 @@
 import math
 
-
 def sphereSurfaceCollide(sphere, surface):
     point = subPoints(sphere.position, surface.position)
     point = rotatePoint(point, -surface.angle)
@@ -12,16 +11,16 @@ def sphereSphereCollide(sphere1, sphere2):
 
 def rotatePoint(point, angle):
     x, y = point
-    cos_angle = math.cos(angle)
-    sin_angle = math.sin(angle)
-    return (x * cos_angle - y * sin_angle, x * sin_angle + y * cos_angle)
+    cosAngle = math.cos(angle)
+    sinAngle = math.sin(angle)
+    return (x * cosAngle - y * sinAngle, x * sinAngle + y * cosAngle)
 
 def addPoints(point1, point2):
     return (point1[0] + point2[0], point1[1] + point2[1])
 def subPoints(point1, point2):
     return (point1[0] - point2[0], point1[1] - point2[1])
-def clamp(value, min_value, max_value):
-    return max(min(value, max_value), min_value)
+def clamp(value, minValue, maxValue):
+    return max(min(value, maxValue), minValue)
 def dist(point1, point2):
     return math.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
 def magnitude(vector):

@@ -3,12 +3,13 @@ import random
 
 from matplotlib.patches import Circle
 from Object import Object
+from StationaryPoint import StationaryPoint
 from Surface import Surface
 from constants import dt
 import utils
 
 class Sphere(Object):
-    def __init__(self, position: tuple[float, float], velocity: tuple[float, float], radius: float, density: float, charge: float = 0, color: str = "gray", gravity: bool = True, bounce: bool = True, angularVelocity: float = 0, friction: float = 0):
+    def __init__(self, position: tuple[float, float], velocity: tuple[float, float], radius: float, density: float, charge: float = 0, color: str = "gray", gravity: bool = True, bounce: bool = True, angularVelocity: float = 0, friction: float = 0, conduct: bool = False):
         self.position = position
         self.velocity = velocity
         self.density = density
@@ -24,8 +25,9 @@ class Sphere(Object):
         self.friction = friction
         self.inertia = (2/5) * self.mass * (radius ** 2)
         self.shape = Circle(self.position, self.radius, color=self.color)
-        self.shape.set_alpha(0.5)
+        self.shape.set_alpha(1)
         self.shape.set_zorder(100+random.random())
+        self.conduct = conduct
     
     def update1(self, objects: list["Object"]) -> None:
         if self.gravity:
@@ -37,6 +39,10 @@ class Sphere(Object):
             if obj is self:
                 continue
             if isinstance(obj, Sphere):
+                r = utils.subPoints(self.position, obj.position)
+                # This uses r^3 because I multiply by the position difference r to get the vector
+                a = 8.98755e9*self.charge*obj.charge/(utils.magnitude(r)**3)/self.mass
+                self.acceleration = utils.addPoints(self.acceleration, utils.mult(r, a))
                 if utils.sphereSphereCollide(self, obj):
                     self.handleSphereCollision(obj)
             elif isinstance(obj, Surface):
@@ -70,37 +76,50 @@ class Sphere(Object):
         normal = utils.subPoints(self.position, sphere.position)
         normal = utils.normalize(normal)
 
+        self.position = utils.addPoints(sphere.position, utils.mult(normal, self.radius+sphere.radius-0.00001))
+
         # Calculate the relative velocity
-        relative_velocity = utils.subPoints(self.velocity, sphere.velocity)
+        relativeVelocity = utils.subPoints(self.velocity, sphere.velocity)
 
         # Calculate the velocity along the normal
-        velocity_along_normal = utils.dot(relative_velocity, normal)
+        velocityAlongNormal = utils.dot(relativeVelocity, normal)
+
+        perpendicularVelocity = utils.cross(relativeVelocity, normal)
 
         # If the spheres are moving apart, do nothing
-        if velocity_along_normal > 0:
+        if velocityAlongNormal > 0:
             return
 
         # Calculate the restitution coefficient
         e = 1 if self.bounce or sphere.bounce else 0.1
 
         # Calculate the impulse scalar
-        j = -(1+e)*velocity_along_normal / (1/self.mass + 1/sphere.mass)
+        j = -(1+e)*velocityAlongNormal / (1/self.mass + 1/sphere.mass)
 
         impulse = (j * normal[0], j * normal[1])
         force = utils.div(impulse, dt)
         self.acceleration = utils.addPoints(self.acceleration, utils.div(force, self.mass))
 
         friction = utils.magnitude(force) * (self.friction+sphere.friction) / 2
-        relative_angular_velocity = self.angularVelocity + sphere.angularVelocity*sphere.radius/self.radius
-        friction_vector = utils.mult(utils.rotatePoint(normal, math.pi/2), 
-                                        min(friction, abs(relative_angular_velocity/dt*self.inertia/self.radius)) * utils.sign(relative_angular_velocity))
-        self.acceleration = utils.addPoints(self.acceleration, utils.div(friction_vector, self.mass))
-        self.angularAcceleration += utils.magnitude(friction_vector)*self.radius / self.inertia * utils.sign(relative_angular_velocity)
+        relativeAngularVelocity = self.angularVelocity + sphere.angularVelocity*sphere.radius/self.radius + perpendicularVelocity/self.radius
+        frictionVector = utils.mult(utils.rotatePoint(normal, math.pi/2), 
+                                        min(friction, abs(relativeAngularVelocity/dt*self.inertia/self.radius)) * utils.sign(relativeAngularVelocity))
+        self.acceleration = utils.addPoints(self.acceleration, utils.div(frictionVector, self.mass))
+        self.angularAcceleration -= min(friction * self.radius / self.inertia, abs(relativeAngularVelocity) / dt) * utils.sign(relativeAngularVelocity)
+
+        if self.conduct and sphere.conduct:
+            # q1/r1=q2/r2
+            # q1 = (qTotal-q1)r1/r2
+            # q1(1+r1/r2)=qTotal*r1/r2
+            qTotal = self.charge + sphere.charge
+            self.charge = qTotal*self.radius/sphere.radius/(1+self.radius/sphere.radius)
+            sphere.charge = qTotal - self.charge
+
 
     def handleSurfaceCollision(self, surface: Surface):
         p = utils.rotatePoint(utils.subPoints(self.position, surface.position), -surface.angle)
         nearest = (utils.clamp(p[0], -surface.size/2, surface.size/2), utils.clamp(p[1], -surface.thickness/2, surface.thickness/2))
-        tempSphere = Sphere(nearest, (0, 0), 0, 0, bounce = surface.bounce, friction = surface.friction)
-        tempSphere.mass = 1e1000
-        self.handleSphereCollision(tempSphere)
+        nearest = utils.addPoints(surface.position, utils.rotatePoint(nearest, surface.angle))
+        tempPoint = StationaryPoint(nearest, 0, bounce = surface.bounce, friction = surface.friction)
+        self.handleSphereCollision(tempPoint)
         

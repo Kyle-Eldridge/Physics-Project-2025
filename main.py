@@ -1,8 +1,10 @@
+import math
 import matplotlib.pyplot as plt
 import numpy as np
 import time
 from Object import Object
 from Sphere import Sphere
+from StationaryPoint import StationaryPoint
 from Surface import Surface
 from constants import dt
 
@@ -30,9 +32,17 @@ def draw():
         obj.draw(ax)
     plt.pause(0.01)
 
-objects.append(Sphere((0, 5), (0, 0), 1, 1))
-objects.append(Sphere((0, 0), (0, 0), 1, 1, gravity=False))
-objects.append(Surface((0, -5), 0.2, 10))
+# objects.append(Sphere((0, 5), (0, 0), 1, 1))
+# objects.append(Sphere((0, 0), (1, 0), 1, 1))
+# objects.append(Surface((-5, -5), -0.75, 10))
+# objects.append(Surface((5, -5), 0.75, 10))
+
+objects.append(StationaryPoint((-9, 8), charge=8e-4))
+objects.append(StationaryPoint((-9, 0), charge=8e-4))
+objects.append(Sphere((-5, 2), (0, 0), 1, 1, bounce=False, charge=2e-3, conduct=True))
+objects.append(Sphere((5, -5), (0, 0), 1, 1, bounce=False, angularVelocity=0, charge=-5e-4, conduct=True))
+objects.append(Surface((0, -5), -0.5, 20, friction=10))
+objects.append(Surface((9, 0), math.pi/2, 20, bounce=True))
 
 time.sleep(5)
 
