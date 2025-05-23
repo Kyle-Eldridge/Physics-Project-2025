@@ -16,6 +16,18 @@ class Bar(String):
         J = velocityAlongString / (1/self.object1.mass + 1/self.object2.mass)
         self.object1.acceleration = utils.addPoints(self.object1.acceleration, utils.mult(direction, -J/self.object1.mass/dt))
         self.object2.acceleration = utils.addPoints(self.object2.acceleration, utils.mult(direction, J/self.object2.mass/dt))
+
+    def update2(self):
+        # Project positions to enforce the string length constraint
+        delta = utils.subPoints(self.object1.position, self.object2.position)
+        dist = utils.magnitude(delta)
+        if dist == 0:
+            return
+        totalMass = self.object1.mass + self.object2.mass
+        correction1 = utils.mult(delta, (dist - self.length) / dist * self.object2.mass / totalMass)
+        correction2 = utils.mult(delta, (dist - self.length) / dist * self.object1.mass / totalMass)
+        self.object1.position = utils.subPoints(self.object1.position, correction1)
+        self.object2.position = utils.addPoints(self.object2.position, correction2)
         
     def draw(self, ax):
         p1 = self.object1.position

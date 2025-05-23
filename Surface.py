@@ -14,9 +14,10 @@ class Surface(object):
         self.thickness = 0.1
         self.bounce = bounce
         self.shape = Rectangle(
-            (self.position[0] - self.size / 2 * math.cos(angle) - self.thickness / 2 * math.sin(angle),
-             self.position[1] - self.size / 2 * math.sin(angle) + self.thickness / 2 * math.cos(angle)),
+            (self.position[0] - self.size / 2 * math.cos(angle) + self.thickness / 2 * math.sin(angle),
+             self.position[1] - self.size / 2 * math.sin(angle) - self.thickness / 2 * math.cos(angle)),
             self.size, self.thickness, angle=self.angle*180/math.pi, color=self.color)
+        self.shape.set_linewidth(0)
         self.shape.set_zorder(0)
 
     def update1(self, objects: list[Object]) -> None:

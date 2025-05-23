@@ -26,6 +26,7 @@ class Sphere(Object):
         self.shape = Circle(self.position, self.radius, color=self.color)
         self.shape.set_alpha(1)
         self.shape.set_zorder(100+random.random())
+        self.shape.set_linewidth(0)
         self.conduct = conduct
     
     def update1(self, objects: list["Object"]) -> None:
