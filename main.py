@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import time
 from Bar import Bar
+from MagneticFieldCircle import MagneticFieldCircle
+from MagneticFieldRect import MagneticFieldRect
 from Object import Object
 from Sphere import Sphere
 from Spring import Spring
@@ -56,11 +58,11 @@ def draw():
 # objects.append(Spring(objects[0], objects[1], 2, 30))
 
 # Double pendulum system
-# objects.append(Sphere((0, 0), (7, 0), 1, 1))
-# objects.append(Sphere((0, -5), (0, 0), 1, 1))
-# objects.append(StationaryPoint((0, 5)))
-# objects.append(Bar(objects[0], objects[1], 5))
-# objects.append(String(objects[0], objects[2], 5))
+objects.append(Sphere((0, 0), (7, 0), 1, 1, charge=1e-4))
+objects.append(Sphere((0, -5), (0, 0), 1, 1, charge=1e-4))
+objects.append(StationaryPoint((0, 5)))
+objects.append(Spring(objects[0], objects[1], 5, 100))
+objects.append(String(objects[0], objects[2], 5))
 
 # Object moving in a circle
 # objects.append(Sphere((0, 5), (20, 0), 1, 1, gravity=False))
@@ -77,43 +79,10 @@ def draw():
 # objects.append(Bar(objects[0], objects[2], 2*math.sqrt(2)))
 # objects.append(Spring(objects[1], objects[2], 4, 300))
 
-import random
-
-# Clear objects list if running interactively
-objects.clear()
-
-# Create five spheres hanging from stationary points (like Newton's Cradle)
-num_balls = 5
-spacing = 2
-top_y = 6
-ball_radius = 0.5
-ball_density = 1
-string_length = 6
-
-anchors = []
-balls = []
-
-for i in range(num_balls):
-    anchor_pos = (-spacing*2 + i*spacing, top_y)
-    ball_pos = (anchor_pos[0], top_y - string_length)
-    anchor = StationaryPoint(anchor_pos, radius=0.1, color="black")
-    ball = Sphere(ball_pos, (random.uniform(-2,2), 0), ball_radius, ball_density, color="blue", gravity=True, bounce=True, friction=0.1)
-    objects.append(anchor)
-    objects.append(ball)
-    anchors.append(anchor)
-    balls.append(ball)
-    objects.append(String(anchor, ball, string_length, color="black"))
-
-# Add springs between adjacent balls for extra chaos
-for i in range(num_balls-1):
-    objects.append(Spring(balls[i], balls[i+1], spacing, 10))
-
-# Add a moving platform underneath
-platform = Surface((0, -4), 0, 12, friction=0.5, bounce=True)
-objects.append(platform)
-
-# Give the first ball a big push
-balls[0].velocity = (30, 0)
+# Charged object moving into a magnetic field
+# objects.append(Sphere((0, 0), (5, 0), 0.5, 1/50**3, gravity=False, charge = 1e-6))
+# objects.append(MagneticFieldRect((7, 0), 10, 20, 10))
+# objects.append(MagneticFieldRect((-7, 0), 10, 20, 10))
 
 time.sleep(5)
 

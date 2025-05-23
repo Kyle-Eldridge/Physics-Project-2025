@@ -2,6 +2,8 @@ import math
 import random
 
 from matplotlib.patches import Circle
+from MagneticFieldCircle import MagneticFieldCircle
+from MagneticFieldRect import MagneticFieldRect
 from Object import Object
 from Surface import Surface
 from constants import dt
@@ -48,6 +50,12 @@ class Sphere(Object):
             elif isinstance(obj, Surface):
                 if utils.sphereSurfaceCollide(self, obj):
                     self.handleSurfaceCollision(obj)
+                E = obj.getEField(self.position)
+                self.acceleration = utils.addPoints(self.acceleration, utils.mult(E, self.charge/self.mass))
+            elif isinstance(obj, (MagneticFieldCircle, MagneticFieldRect)):
+                if obj.collide(self):
+                    a = utils.mult(utils.rotatePoint(self.velocity, -math.pi/2), self.charge * obj.fieldStrength / self.mass)
+                    self.acceleration = utils.addPoints(self.acceleration, a)
         
     def update2(self):
         # Update position

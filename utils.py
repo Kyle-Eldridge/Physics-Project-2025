@@ -6,6 +6,12 @@ def sphereSurfaceCollide(sphere, surface):
     p2 = (clamp(point[0], -surface.size / 2, surface.size / 2), clamp(point[1], -surface.thickness / 2, surface.thickness / 2))
     return dist(point, p2) <= sphere.radius
 
+def sphereRectCollide(sphere, rect):
+    point = subPoints(sphere.position, rect.position)
+    point = rotatePoint(point, -rect.angle)
+    p2 = (clamp(point[0], -rect.width / 2, rect.width / 2), clamp(point[1], -rect.height / 2, rect.height / 2))
+    return dist(point, p2) <= sphere.radius
+
 def sphereSphereCollide(sphere1, sphere2):
     return dist(sphere1.position, sphere2.position) <= (sphere1.radius + sphere2.radius)
 
