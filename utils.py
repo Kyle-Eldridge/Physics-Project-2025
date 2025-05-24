@@ -28,9 +28,9 @@ def subPoints(point1, point2):
 def clamp(value, minValue, maxValue):
     return max(min(value, maxValue), minValue)
 def dist(point1, point2):
-    return math.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
+    return math.hypot(point1[0] - point2[0], point1[1] - point2[1])
 def magnitude(vector):
-    return math.sqrt(vector[0] ** 2 + vector[1] ** 2)
+    return math.hypot(vector[0], vector[1])
 def angle(vector):
     return math.atan2(vector[1], vector[0])
 def mult(vector, scalar):

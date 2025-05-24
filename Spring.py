@@ -3,9 +3,10 @@ import numpy as np
 from Object import Object
 from Sphere import Sphere
 import utils
+from typing import Callable
 
 class Spring(Object):
-    def __init__(self, object1: Sphere, object2: Sphere, restLength, springConstant, color: str = "black"):
+    def __init__(self, object1: Sphere, object2: Sphere, restLength: float, springConstant: float | Callable[[float], float], color: str = "black"):
         self.object1 = object1
         self.object2 = object2
         self.restLength = restLength

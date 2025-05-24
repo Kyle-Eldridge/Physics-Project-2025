@@ -5,8 +5,9 @@ import utils
 from constants import dt
 
 class Bar(String):
-    def __init__(self, object1: Sphere, object2: Sphere, length: float, color: str = "gray"):
+    def __init__(self, object1: Sphere, object2: Sphere, length: float, color: str = "gray", lineWidth: float = 8):
         super().__init__(object1, object2, length, color)
+        self.lineWidth = lineWidth
 
     def update1(self, objects):
         length = utils.dist(self.object1.position, self.object2.position)
@@ -34,4 +35,4 @@ class Bar(String):
         p2 = self.object2.position
 
         # Draw a line between the two spheres
-        ax.plot([p1[0], p2[0]], [p1[1], p2[1]], color=self.color, linewidth=8)
+        ax.plot([p1[0], p2[0]], [p1[1], p2[1]], color=self.color, linewidth=self.lineWidth)

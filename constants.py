@@ -1,2 +1,2 @@
-dt = 0.01
-updatesPerFrame = 10
+dt = 0.001
+updatesPerFrame = 100

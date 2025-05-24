@@ -33,9 +33,10 @@ def draw():
     ax.set_aspect('equal')
     ax.set_xlim(-10, 10)
     ax.set_ylim(-10, 10)
+    ax.set_axis_off()
     for obj in objects:
         obj.draw(ax)
-    plt.pause(0.01)
+    plt.pause(0.001)
 
 # Two spheres bouncing on two surfaces
 # objects.append(Sphere((0, 5), (0, 0), 1, 1))
@@ -58,11 +59,11 @@ def draw():
 # objects.append(Spring(objects[0], objects[1], 2, 30))
 
 # Double pendulum system
-objects.append(Sphere((0, 0), (7, 0), 1, 1, charge=1e-4))
-objects.append(Sphere((0, -5), (0, 0), 1, 1, charge=1e-4))
-objects.append(StationaryPoint((0, 5)))
-objects.append(Spring(objects[0], objects[1], 5, 100))
-objects.append(String(objects[0], objects[2], 5))
+# objects.append(Sphere((0, 0), (7, 0), 1, 1, charge=1e-4))
+# objects.append(Sphere((0, -5), (0, 0), 1, 1, charge=1e-4))
+# objects.append(StationaryPoint((0, 5)))
+# objects.append(Spring(objects[0], objects[1], 5, 100))
+# objects.append(String(objects[0], objects[2], 5))
 
 # Object moving in a circle
 # objects.append(Sphere((0, 5), (20, 0), 1, 1, gravity=False))
@@ -84,10 +85,30 @@ objects.append(String(objects[0], objects[2], 5))
 # objects.append(MagneticFieldRect((7, 0), 10, 20, 10))
 # objects.append(MagneticFieldRect((-7, 0), 10, 20, 10))
 
+# Example for presentation
+# Double pendulum
+objects.append(StationaryPoint((-5, 9.5), radius=0.2))
+objects.append(Sphere((-5, 6.5), (0, 0), 0.5, 1, 7e-6))
+objects.append(Sphere((-5, 3.5), (0, 0), 0.5, 1, 0))
+objects.append(Surface((-9.9, 0), math.pi/2, 20, 0, surfaceChargeDensity=-1e-5, bounce=True))
+objects.append(Surface((-0.1, 5), math.pi/2, 10, 0, surfaceChargeDensity=1e-5, bounce=True))
+objects.append(String(objects[0], objects[1], 3))
+objects.append(Bar(objects[1], objects[2], 3, lineWidth=5))
+# Falling non-ideal spring system
+objects.append(Sphere((3, 5), (0, 0), 1, 1, 1e-9, friction=1, bounce=True))
+objects.append(Sphere((9, 5), (0, 4), 1, 1, 1e-9, friction=1, bounce=False))
+objects.append(Spring(objects[7], objects[8], 4, lambda x: -30*x*abs(x)))
+# Ramp and magnetic field
+objects.append(Surface((0, -6), 0.4, 30, 1))
+objects.append(MagneticFieldRect((-7, -5.5), 8, 8, 1e10, 0.4))
+
 time.sleep(5)
 
 while True:
+    t1 = time.time_ns()
     for i in range(updatesPerFrame):
         update()
     draw()
-    time.sleep(dt*updatesPerFrame)
+    t2 = time.time_ns()
+    t = (t2-t1)/1e9
+    time.sleep(max(dt*updatesPerFrame - t, 0))

@@ -6,7 +6,7 @@ from matplotlib.patches import Rectangle
 import utils
 
 class Surface(object):
-    def __init__(self, position: tuple[float, float], angle: float, size: float, friction: float = 0.5, color: str = "black", bounce: bool = False, thickness: float = 0.1, surfaceChargeDensity: float = 0):
+    def __init__(self, position: tuple[float, float], angle: float, size: float, friction: float = 0.5, color: str = "black", bounce: bool = False, thickness: float = 0.2, surfaceChargeDensity: float = 0):
         self.position = position
         self.angle = angle
         self.size = size
