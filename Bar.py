@@ -13,7 +13,7 @@ class Bar(String):
         length = utils.dist(self.object1.position, self.object2.position)
         direction = utils.normalize(utils.subPoints(self.object1.position, self.object2.position))
         relativeVelocity = utils.subPoints(self.object1.velocity, self.object2.velocity)
-        velocityAlongString = utils.dot(relativeVelocity, direction)+(length-self.length)*5
+        velocityAlongString = utils.dot(relativeVelocity, direction)+(length-self.length)
         J = velocityAlongString / (1/self.object1.mass + 1/self.object2.mass)
         self.object1.acceleration = utils.addPoints(self.object1.acceleration, utils.mult(direction, -J/self.object1.mass/dt))
         self.object2.acceleration = utils.addPoints(self.object2.acceleration, utils.mult(direction, J/self.object2.mass/dt))
