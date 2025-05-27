@@ -104,11 +104,12 @@ objects.append(MagneticFieldRect((-7, -5.5), 8, 8, 1e10, 0.4))
 
 time.sleep(5)
 
-while True:
+while plt.fignum_exists(fig.number):
     t1 = time.time_ns()
     for i in range(updatesPerFrame):
         update()
     draw()
     t2 = time.time_ns()
     t = (t2-t1)/1e9
-    time.sleep(max(dt*updatesPerFrame - t, 0))
+    if t < dt * updatesPerFrame:
+        time.sleep(dt*updatesPerFrame - t)
